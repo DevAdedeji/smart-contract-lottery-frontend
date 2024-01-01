@@ -143,6 +143,7 @@ async function enterRaffle() {
       });
       await listenForTransactionMine(transactionResponse, provider);
       await getBalance();
+      await getEntranceFee();
       await getNumOfPlayers();
       await getRaffleState();
       await getRecentWinner();
@@ -165,6 +166,7 @@ async function enterRaffle() {
 watch(isConnected, async () => {
   if (isConnected.value) {
     await getBalance();
+    await getEntranceFee();
     await getNumOfPlayers();
     await getRaffleState();
     await getRecentWinner();
