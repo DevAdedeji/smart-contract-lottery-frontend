@@ -17,7 +17,7 @@ const userBalance = ref(null);
 const loading = ref(false);
 const numberOfPlayers = ref(null);
 const isLotteryOpen = ref(false);
-const gettingLotteryState = ref(true);
+const gettingLotteryState = ref(false);
 const recentWinner = ref("");
 const raffleEntranceFee = ref(0);
 const noRaffleAddress = ref(true);
@@ -65,10 +65,9 @@ async function registerContract() {
   const provider = new ethers.providers.Web3Provider(walletProvider.value);
   const signer = provider.getSigner();
   const chainId = useWeb3ModalAccount().chainId.value;
-  console.log(chainId);
+
   let contractAddress = ContractAddresses[chainId];
-  console.log(ContractAddresses);
-  console.log(contractAddress);
+
   contractAddress = contractAddress[contractAddress.length - 1];
   if (contractAddress) {
     noRaffleAddress.value = false;
@@ -105,7 +104,8 @@ async function getNumOfPlayers() {
 }
 
 async function getRaffleState() {
-  if (!noRaffleAddress) {
+  console.log(noRaffleAddress.value);
+  if (!noRaffleAddress.value) {
     try {
       gettingLotteryState.value = true;
       const { contract } = await registerContract();
@@ -222,7 +222,7 @@ onBeforeMount(async () => {
         </p>
       </div>
       <div
-        v-if="!gettingLotteryState && isConnected"
+        v-if="!gettingLotteryState && isConnected && !noRaffleAddress"
         class="min-h-[50vh] w-[80%] md:w-[50%] mx-auto bg-gray-200 flex flex-col gap-4 justify-center px-5"
       >
         <p class="text-lg font-medium">
