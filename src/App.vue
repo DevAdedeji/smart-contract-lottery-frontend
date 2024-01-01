@@ -189,11 +189,9 @@ onBeforeMount(async () => {
 <template>
   <main>
     <header
-      class="flex items-center justify-between p-5 border boder-gray-300 shadow-2xl"
+      class="flex flex-col gap-4 sm:gap-0 sm:flex-row items-center justify-between p-5 border boder-gray-300 shadow-2xl"
     >
-      <h1 class="text-xl text-gray-900 font-semibold">
-        Smart Contract Lottery
-      </h1>
+      <h1 class="text-xl text-gray-900 font-semibold">Lottery App</h1>
       <div
         class="flex items-center"
         :class="isConnected ? 'border border-gray-300 rounded-xl' : ''"
@@ -223,7 +221,7 @@ onBeforeMount(async () => {
       </div>
       <div
         v-if="!gettingLotteryState && isConnected && !noRaffleAddress"
-        class="min-h-[50vh] w-[80%] md:w-[50%] mx-auto bg-gray-200 flex flex-col gap-4 justify-center px-5"
+        class="min-h-[50vh] w-[95%] sm:w-[80%] md:w-[50%] mx-auto bg-gray-200 flex flex-col gap-4 justify-center px-5"
       >
         <p class="text-lg font-medium">
           Entrance Fee: {{ raffleEntranceFee }} ETH
