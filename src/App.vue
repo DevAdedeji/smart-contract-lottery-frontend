@@ -19,6 +19,7 @@ const numberOfPlayers = ref(null);
 const isLotteryOpen = ref(false);
 const gettingLotteryState = ref(true);
 const recentWinner = ref("");
+const raffleEntranceFee = ref(0);
 
 // 2. Set chains
 const mainnet = {
@@ -63,7 +64,10 @@ async function registerContract() {
   const provider = new ethers.providers.Web3Provider(walletProvider.value);
   const signer = provider.getSigner();
   const chainId = useWeb3ModalAccount().chainId.value;
+  console.log(chainId);
   let contractAddress = ContractAddresses[chainId];
+  console.log(ContractAddresses);
+  console.log(contractAddress);
   contractAddress = contractAddress[contractAddress.length - 1];
   const contract = new ethers.Contract(contractAddress, ABI, signer);
   return { contract, provider };
@@ -82,6 +86,7 @@ async function getEntranceFee() {
   const { contract } = await registerContract();
   let entranceFee = await contract.getEntranceFee();
   entranceFee = entranceFee.toString() * 0.000000000000000001;
+  raffleEntranceFee.value = entranceFee;
   return entranceFee;
 }
 
@@ -126,6 +131,7 @@ async function enterRaffle() {
         value: ethers.utils.parseEther(`${entranceFee}`),
       });
       await listenForTransactionMine(transactionResponse, provider);
+      await getBalance();
       await getNumOfPlayers();
       await getRaffleState();
       await getRecentWinner();
@@ -187,7 +193,7 @@ onBeforeMount(async () => {
         </p>
       </div>
     </header>
-    <section>
+    <section class="min-h-[80vh] flex items-center justify-center">
       <div
         class="min-h-[50vh] flex items-center justify-center"
         v-if="!isConnected"
@@ -201,21 +207,33 @@ onBeforeMount(async () => {
         class="min-h-[50vh] flex flex-col gap-4 items-center justify-center"
       >
         <p class="text-gray-900 font-bold text-lg text-center uppercase">
-          Checking if lottery is open or not!
+          Checking if lottery is open or not....
         </p>
       </div>
       <div
         v-if="!gettingLotteryState && isConnected"
-        class="min-h-[50vh] flex flex-col gap-4 items-center justify-center"
+        class="min-h-[50vh] w-[80%] md:w-[50%] mx-auto bg-gray-200 flex flex-col gap-4 justify-center px-5"
       >
-        <p v-if="numberOfPlayers">No. Of Players: {{ numberOfPlayers }}</p>
-        <p v-if="recentWinner">Recent winner: {{ recentWinner }}</p>
+        <p class="text-lg font-medium">
+          Entrance Fee: {{ raffleEntranceFee }} ETH
+        </p>
+        <p v-if="numberOfPlayers" class="text-lg font-medium">
+          No. Of Players: {{ numberOfPlayers }}
+        </p>
+        <p v-if="recentWinner" class="text-lg font-medium">
+          Recent winner: {{ recentWinner }}
+        </p>
+
         <button
           @click="enterRaffle"
           :disabled="loading"
-          class="bg-blue-500 text-white p-3 rounded"
+          class="bg-blue-500 text-white p-3 rounded flex items-center gap-1 self-start"
         >
           {{ loading ? "Entering...." : "Enter raffle" }}
+          <p
+            v-if="loading"
+            class="animate-spin spinner-border h-5 w-5 border-b-2 rounded-full"
+          ></p>
         </button>
       </div>
     </section>
