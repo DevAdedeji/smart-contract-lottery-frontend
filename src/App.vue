@@ -105,19 +105,23 @@ async function getNumOfPlayers() {
 }
 
 async function getRaffleState() {
-  try {
-    gettingLotteryState.value = true;
-    const { contract } = await registerContract();
-    let raffleState = await contract.getRaffleState();
-    raffleState = raffleState.toString();
-    if (raffleState === "0") {
-      isLotteryOpen.value = true;
-    } else {
-      isLotteryOpen.value = false;
+  if (!noRaffleAddress) {
+    try {
+      gettingLotteryState.value = true;
+      const { contract } = await registerContract();
+      let raffleState = await contract.getRaffleState();
+      raffleState = raffleState.toString();
+      if (raffleState === "0") {
+        isLotteryOpen.value = true;
+      } else {
+        isLotteryOpen.value = false;
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      gettingLotteryState.value = false;
     }
-  } catch (e) {
-    console.log(e);
-  } finally {
+  } else {
     gettingLotteryState.value = false;
   }
 }
@@ -200,7 +204,7 @@ onBeforeMount(async () => {
         </p>
       </div>
     </header>
-    <section class="min-h-[80vh] flex items-center justify-center">
+    <section class="min-h-[80vh] flex flex-col items-center justify-center">
       <div
         class="min-h-[50vh] flex items-center justify-center"
         v-if="!isConnected"
@@ -244,7 +248,7 @@ onBeforeMount(async () => {
         </button>
       </div>
       <div
-        v-if="noRaffleAddress && isConnected"
+        v-if="noRaffleAddress && isConnected && !gettingLotteryState"
         class="min-h-[50vh] flex flex-col gap-4 items-center justify-center"
       >
         <p class="text-gray-900 font-bold text-lg text-center uppercase">
