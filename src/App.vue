@@ -17,7 +17,7 @@ const userBalance = ref(null);
 const loading = ref(false);
 const numberOfPlayers = ref(null);
 const isLotteryOpen = ref(false);
-const gettingLotteryState = ref(false);
+const gettingLotteryState = ref(true);
 const recentWinner = ref("");
 const raffleEntranceFee = ref(0);
 const noRaffleAddress = ref(true);
@@ -204,21 +204,27 @@ onBeforeMount(async () => {
         </p>
       </div>
     </header>
+
+    <div
+      class="min-h-[50vh] flex items-center justify-center"
+      v-if="!isConnected"
+    >
+      <p class="text-gray-900 font-bold text-lg text-center uppercase">
+        Pls connect to a wallet!
+      </p>
+    </div>
+
     <section class="min-h-[80vh] flex flex-col items-center justify-center">
       <div
-        class="min-h-[50vh] flex items-center justify-center"
-        v-if="!isConnected"
-      >
-        <p class="text-gray-900 font-bold text-lg text-center uppercase">
-          Pls connect to a wallet!
-        </p>
-      </div>
-      <div
+        class="animate-spin spinner-border h-24 w-24 border-b-4 rounded-full border-blue-500"
         v-if="gettingLotteryState && isConnected"
+      ></div>
+      <div
+        v-if="noRaffleAddress && isConnected"
         class="min-h-[50vh] flex flex-col gap-4 items-center justify-center"
       >
         <p class="text-gray-900 font-bold text-lg text-center uppercase">
-          Checking if lottery is open or not....
+          No raffle address detected
         </p>
       </div>
       <div
@@ -246,14 +252,6 @@ onBeforeMount(async () => {
             class="animate-spin spinner-border h-5 w-5 border-b-2 rounded-full"
           ></p>
         </button>
-      </div>
-      <div
-        v-if="noRaffleAddress && isConnected && !gettingLotteryState"
-        class="min-h-[50vh] flex flex-col gap-4 items-center justify-center"
-      >
-        <p class="text-gray-900 font-bold text-lg text-center uppercase">
-          No raffle address detected
-        </p>
       </div>
     </section>
   </main>
